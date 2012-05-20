@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html><head>
+<title>P0f - SSL fingerprinting</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<style>
+body {
+  font-family: 'Georgia', 'Arial', 'Helvetica';
+  margin-left: 1%;
+  margin-right: 1%;
+}
+h1 {
+  border-width: 0 0 1px 0;
+  border-color: teal;
+  border-style: solid;
+  margin-bottom: 2px;
+  padding-bottom: 2px;
+}
+code {
+  color: maroon;
+  font-family: 'Georgia', 'Arial', 'Helvetica';
+}
+
+</style>
+<body>
+
+<h1>SSL fingerprinting</h1>
+
+<h2>Your SSL fingerprint</h2>
+
+% if not remote_address:
+<b>You don't seem to be using SSL here</b>
+% else:
+% if not remote_data or not remote_data.get('ssl request'):
+<b>Something went wrong</b>
+% else:
+<pre>
+IP:      ${remote_address}
+raw_sig: ${ remote_data['ssl request']['raw_sig'] }
+
+
+[*] ssl request
+%  for k, v in remote_data['ssl request'].iteritems():
+${'  %10s %s' % (k, v)}
+%  endfor
+<pre>
+
+% endif
+% endif
+
+
+% if local_data and local_data.get('http request'):
+<pre>
+[*] http request
+%  for k, v in local_data['http request'].iteritems():
+${'  %10s %s' % (k, v)}
+%  endfor
+</pre>
+% endif
+
+% if remote_data and remote_data.get('syn'):
+<pre>
+[*] syn
+%  for k, v in remote_data['syn'].iteritems():
+${'  %10s %s' % (k, v)}
+%  endfor
+</pre>
+% endif
+
+
+
+
+<h2>Everything remote</h2>
+% if remote_data:
+%     for category, data in remote_data.iteritems():
+[*] ${category}
+%  for k, v in data.iteritems():
+${'  %10s %s' % (k, v)}
+%  endfor
+
+%     endfor
+% endif

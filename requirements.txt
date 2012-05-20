@@ -1,0 +1,4 @@
+tornado==2.2
+rons==0.0.1
+redis==2.4.11
+Mako==0.6.2
